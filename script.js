@@ -8,7 +8,9 @@ let page = 1;
 
 // Fetch data from API
 async function getPost() {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_page=${page}`);
+    const res = await fetch(
+        `https://jsonplaceholder.typicode.com/posts?_limit=${limit}&_page=${page}`
+    );
 
     const data = await res.json(); 
 
@@ -19,17 +21,17 @@ async function getPost() {
 // Display data to DOM 
 async function showPost() {
     const posts = await getPost();
+    console.log(posts);
 
-    posts.forEach(post => {
-        const postEl = document.createElement('div'); 
+    //why both 'forEach()' works here too ? 
+    posts.map(post => {
+        const postEl = document.createElement('div');
         postEl.classList.add('post');
         postEl.innerHTML = `
         <div class="number">${post.id}</div>
             <div class="post-info">
-                <h2 class="post-title">${post.title} </h2>
-                <p class="post-body">
-                ${post.body}
-                </p>
+                <h2 class="post-title">${post.title}</h2>
+                <p class="post-body">${post.body}</p>
             </div>
         `;
 
@@ -38,5 +40,32 @@ async function showPost() {
 }
 
 
+
+// Show loader & fetch more posts
+function showLoading() {
+    loading.classList.add('show');
+
+    setTimeout(() => {
+        loading.classList.remove('show');
+
+        setTimeout(() => {
+            page++;
+            showPost();  
+        }, 300);
+
+    }, 1000);
+}
+
+
+
 // Show initial posts
 showPost();
+
+window.addEventListener('scroll', () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+        showLoading();
+    }
+});
+
