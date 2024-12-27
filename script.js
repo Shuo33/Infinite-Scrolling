@@ -18,12 +18,11 @@ async function getPost() {
 }
 
 
-// Display data to DOM 
+// Display data to DOM: since 'getPost()' gives a promise, we need to use async & await here
 async function showPost() {
     const posts = await getPost();
-    console.log(posts);
 
-    //why both 'forEach()' works here too ? 
+    //why 'forEach()' works here too ? 
     posts.map(post => {
         const postEl = document.createElement('div');
         postEl.classList.add('post');
@@ -58,6 +57,26 @@ function showLoading() {
 
 
 
+// Filter post by input
+function filterPosts(e) {
+    const term = e.target.value.trim().toUpperCase();
+    const posts = document.querySelectorAll('.post');
+
+    posts.forEach(post => {
+        const title = post.querySelector('.post-title').innerText.toUpperCase(); 
+        const body = post.querySelector('.post-body').innerText.toUpperCase();
+
+        // if there's a match on the title and body, then show the post
+        if (title.indexOf(term) > -1 || body.indexOf(term) > -1) {
+            post.style.display = 'flex';
+        } else {
+            post.style.display = 'none';
+        }
+    });
+}
+
+
+
 // Show initial posts
 showPost();
 
@@ -68,4 +87,9 @@ window.addEventListener('scroll', () => {
         showLoading();
     }
 });
+
+
+filter.addEventListener('input', filterPosts);
+
+
 
